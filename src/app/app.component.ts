@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import { Subscription } from 'rxjs/Subscription';
 
 import { FirebaseService } from './firebase.service';
+import { User } from './user-profile/user.model';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     this.fbAuthSubscription = this.fbService.authChanged.subscribe(
-      (user: firebase.User) => {
+      (user: User) => {
         if (user) {
           this.authenticated = true;
         } else {

@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 
 import { FirebaseService } from './../firebase.service';
 import { Message } from './message.model';
+import { User } from './../user-profile/user.model';
 
 @Component({
   selector: 'app-chat',
@@ -14,18 +15,21 @@ export class ChatComponent implements OnInit, OnDestroy {
   fbAuthSubscription: Subscription;
   fbMessagesSubscription: Subscription;
   authenticated = false;
+  user: User;
   messages: Message[];
 
   constructor(private fbService: FirebaseService) { }
 
   ngOnInit() {
     this.fbAuthSubscription = this.fbService.authChanged.subscribe(
-      (user: firebase.User) => {
+      (user: User) => {
         if (user) {
           this.authenticated = true;
+          this.user = user;
           this.fbService.listenToMessages();
         } else {
           this.authenticated = false;
+          this.user = null;
         }
       }
     );
@@ -36,8 +40,21 @@ export class ChatComponent implements OnInit, OnDestroy {
     );
   }
 
-  onSend(message: string) {
-    this.fbService.sendMessage(message);
+  getMessages() {
+    if (!this.messages || this.messages.length === 0) {
+      return;
+    }
+    return this.messages.filter((message: Message) => {
+      if (message.adminOnly) {
+        return this.user ? this.user.isAdmin : false;
+      } else {
+        return true;
+      }
+    });
+  }
+
+  onSend(message: string, adminOnly: boolean) {
+    this.fbService.sendMessage(message, adminOnly);
   }
 
   ngOnDestroy() {

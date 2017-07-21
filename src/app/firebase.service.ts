@@ -1,27 +1,34 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
+import { User } from './user-profile/user.model';
 import { Message } from './chat/message.model';
 
 @Injectable()
 export class FirebaseService {
-  authChanged = new BehaviorSubject<firebase.User>(null);
+  authChanged = new BehaviorSubject<User>(null);
   error = new BehaviorSubject<firebase.FirebaseError>(null);
   messagesUpdated = new Subject<{ content: string, userId: string }[]>();
-  authenticatedUser: firebase.User;
+  authenticatedUser: User;
 
-  constructor (private router: Router) {}
+  constructor(private router: Router) { }
 
   signUserIn(email: string, password: string) {
     firebase.auth().signInWithEmailAndPassword(email, password)
       .then(
       (user: firebase.User) => {
-        this.authChanged.next(user);
-        this.authenticatedUser = user;
-        this.router.navigate(['/']);
+        firebase.database().ref('users').child(user.uid).on('value', (data: firebase.database.DataSnapshot) => {
+          const authUser: User = {
+            id: user.uid,
+            isAdmin: data.val().isAdmin
+          };
+          this.authChanged.next(authUser);
+          this.authenticatedUser = authUser;
+          this.router.navigate(['/']);
+        });
       }
       )
       .catch(
@@ -35,8 +42,16 @@ export class FirebaseService {
     firebase.auth().createUserWithEmailAndPassword(email, password)
       .then(
       (user: firebase.User) => {
-        this.authChanged.next(user);
-        this.authenticatedUser = user;
+        const newUser: User = {id: user.uid, isAdmin: false};
+        this.authChanged.next(newUser);
+        this.authenticatedUser = newUser;
+        return firebase.database().ref('users').child(user.uid).set({
+          isAdmin: false
+        });
+      }
+      )
+      .then(
+      result => {
         this.router.navigate(['/']);
       }
       )
@@ -65,8 +80,13 @@ export class FirebaseService {
     });
   }
 
-  sendMessage(message: string) {
-    firebase.database().ref('messages').push({ content: message, userId: this.authenticatedUser.uid })
+  sendMessage(message: string, adminOnly: boolean) {
+    firebase.database().ref('messages').push({
+      content: message,
+      userId: this.authenticatedUser.id,
+      date: (new Date()).toISOString(),
+      adminOnly: adminOnly
+    })
       .then(
       (result) => {
         console.log(result);
