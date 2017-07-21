@@ -1,3 +1,27 @@
-<p>
-  chat works!
-</p>
+<div class="row" *ngIf="!authenticated">
+  <div class="col-xs-12 col-md-6 col-md-offset-3 text-center">
+    <h4>Please log in first!</h4>
+    <div>
+      <button class="btn btn-primary" routerLink="/signin">Sign in</button>
+      <button class="btn btn-default" routerLink="/signup">Sign up</button>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="authenticated">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div style="margin-bottom: 20px">
+      <textarea rows="5" placeholder="Your message" #messageInput class="form-control"></textarea>
+    </div>
+    <div>
+      <button class="btn btn-primary" (click)="onSend(messageInput.value)">Send</button>
+    </div>
+  </div>
+</div>
+<hr>
+<div class="row" *ngIf="authenticated">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default" *ngFor="let message of messages">
+      <div class="panel-body">{{ message.content }}</div>
+    </div>
+  </div>
+</div>
