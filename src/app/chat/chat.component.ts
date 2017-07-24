@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.fbAuthSubscription = this.fbService.authChanged.subscribe(
       (user: User) => {
         if (user) {
+          this.user = this.fbService.authenticatedUser;
           this.authenticated = true;
           this.user = user;
           this.fbService.listenToMessages();
