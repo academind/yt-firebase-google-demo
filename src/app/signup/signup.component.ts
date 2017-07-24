@@ -12,6 +12,7 @@ import { FirebaseService } from '../firebase.service';
 export class SignupComponent implements OnInit, OnDestroy {
   error: firebase.FirebaseError;
   fbErrorSubscription: Subscription;
+  file: File;
 
   constructor(private fbService: FirebaseService) { }
 
@@ -23,8 +24,12 @@ export class SignupComponent implements OnInit, OnDestroy {
     );
   }
 
+  onFileChange(fileInput: HTMLInputElement) {
+    this.file = fileInput.files[0];
+  }
+
   onSignup(formValue: {email: string, password: string}) {
-    this.fbService.signUserUp(formValue.email, formValue.password);
+    this.fbService.signUserUp(formValue.email, formValue.password, this.file);
   }
 
   ngOnDestroy() {

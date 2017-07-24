@@ -4,6 +4,7 @@ import * as firebase from 'firebase';
 
 import { FirebaseService } from './../firebase.service';
 import { Message } from './message.model';
+import { User } from './../user.model';
 
 @Component({
   selector: 'app-chat',
@@ -14,6 +15,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   fbAuthSubscription: Subscription;
   fbMessagesSubscription: Subscription;
   authenticated = false;
+  user: User;
   messages: Message[];
 
   constructor(private fbService: FirebaseService) { }
@@ -22,6 +24,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     this.fbAuthSubscription = this.fbService.authChanged.subscribe(
       (user: firebase.User) => {
         if (user) {
+          this.user = this.fbService.authenticatedUser;
           this.authenticated = true;
           this.fbService.listenToMessages();
         } else {

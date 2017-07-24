@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, OnDestroy {
       authDomain: 'fir-chat-75d32.firebaseapp.com',
       databaseURL: 'https://fir-chat-75d32.firebaseio.com',
       projectId: 'fir-chat-75d32',
-      storageBucket: ''
+      storageBucket: 'gs://fir-chat-75d32.appspot.com'
     });
 
     this.fbAuthSubscription = this.fbService.authChanged.subscribe(
