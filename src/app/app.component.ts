@@ -3,7 +3,7 @@ import * as firebase from 'firebase';
 import { Subscription } from 'rxjs/Subscription';
 
 import { FirebaseService } from './firebase.service';
-import { User } from './user-profile/user.model';
+import { User } from './user.model';
 
 @Component({
   selector: 'app-root',

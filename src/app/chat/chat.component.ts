@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 
 import { FirebaseService } from './../firebase.service';
 import { Message } from './message.model';
-import { User } from './../user-profile/user.model';
+import { User } from './../user.model';
 
 @Component({
   selector: 'app-chat',

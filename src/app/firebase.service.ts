@@ -4,7 +4,7 @@ import * as firebase from 'firebase';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { User } from './user-profile/user.model';
+import { User } from './user.model';
 import { Message } from './chat/message.model';
 
 @Injectable()
